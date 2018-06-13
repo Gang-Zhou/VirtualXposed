@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.util.Log;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -63,8 +64,9 @@ public class VCommends {
 	public static void c(Context context) {
 		String sig = getSig(context);
 		if (!"99A244F52F40581B48E4BA61E3435B6C".equalsIgnoreCase(sig)) {
-			System.exit(10);
-			android.os.Process.killProcess(android.os.Process.myPid());
+			Log.i("Exit", "c: Why????");
+//			System.exit(10);
+//			android.os.Process.killProcess(android.os.Process.myPid());
 		}
 	}
 }
