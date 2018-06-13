@@ -2,6 +2,8 @@ package io.virtualapp.settings;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -29,6 +31,7 @@ import java.io.IOException;
 
 import io.virtualapp.R;
 import io.virtualapp.abs.ui.VUiKit;
+import io.virtualapp.gms.FakeGms;
 import io.virtualapp.home.ListAppActivity;
 import moe.feng.alipay.zerosdk.AlipayZeroSdk;
 
@@ -56,6 +59,7 @@ public class SettingsActivity extends Activity {
     private static final String RECOMMEND_PLUGIN = "settings_plugin_recommend";
     private static final String DISABLE_RESIDENT_NOTIFICATION = "advance_settings_disable_resident_notification";
     private static final String ALLOW_FAKE_SIGNATURE = "advance_settings_allow_fake_signature";
+    private static final String DISABLE_XPOSED = "advance_settings_disable_xposed";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +103,7 @@ public class SettingsActivity extends Activity {
             SwitchPreference yieldMode = (SwitchPreference) findPreference(YIELD_MODE);
             SwitchPreference disableResidentNotification = (SwitchPreference) findPreference(DISABLE_RESIDENT_NOTIFICATION);
             SwitchPreference allowFakeSignature = (SwitchPreference) findPreference(ALLOW_FAKE_SIGNATURE);
+            SwitchPreference disableXposed = (SwitchPreference) findPreference(DISABLE_XPOSED);
 
             addApp.setOnPreferenceClickListener(preference -> {
                 ListAppActivity.gotoListApp(getActivity());
@@ -152,11 +157,45 @@ public class SettingsActivity extends Activity {
                         .setTitle(R.string.donate_dialog_title)
                         .setMessage(R.string.donate_dialog_content)
                         .setPositiveButton(R.string.donate_dialog_yes, (dialog, which) -> {
-                            if (!AlipayZeroSdk.hasInstalledAlipayClient(getActivity())) {
-                                Toast.makeText(getActivity(), R.string.prompt_alipay_not_found, Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                            AlipayZeroSdk.startAlipayClient(getActivity(), "FKX016770URBZGZSR37U37");
+                            // show chooser dialog
+
+                            final String alipay = getResources().getString(R.string.donate_alipay);
+                            final String[] items = {alipay, "Paypal", "Bitcoin"};
+
+                            AlertDialog chooseDialog = new AlertDialog.Builder(getActivity(), R.style.Theme_AppCompat_DayNight_Dialog_Alert)
+                                    .setTitle(R.string.donate_choose_title)
+                                    .setItems(items, (dialog1, which1) -> {
+                                        dialog1.dismiss();
+                                        if (which1 == 0) {
+                                            if (!AlipayZeroSdk.hasInstalledAlipayClient(getActivity())) {
+                                                Toast.makeText(getActivity(), R.string.prompt_alipay_not_found, Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
+                                            AlipayZeroSdk.startAlipayClient(getActivity(), "FKX016770URBZGZSR37U37");
+                                        } else if (which1 == 1) {
+                                            try {
+                                                Intent t = new Intent(Intent.ACTION_VIEW);
+                                                t.setData(Uri.parse("https://paypal.me/virtualxposed"));
+                                                startActivity(t);
+                                            } catch (Throwable ignored) {
+                                                ignored.printStackTrace();
+                                            }
+                                        } else if (which1 == 2) {
+                                            final String address = "39Wst8oL74pRP2vKPkPihH6RFQF4hWoBqU";
+
+                                            try {
+                                                ClipboardManager clipboardManager = (ClipboardManager) getActivity().getSystemService(CLIPBOARD_SERVICE);
+                                                if (clipboardManager != null) {
+                                                    clipboardManager.setPrimaryClip(ClipData.newPlainText(null, address));
+                                                }
+                                                Toast.makeText(getActivity(), getResources().getString(R.string.donate_bitconins_tips), Toast.LENGTH_SHORT).show();
+                                            } catch (Throwable ignored) {
+                                                ignored.printStackTrace();
+                                            }
+                                        }
+                                    })
+                                    .create();
+                            chooseDialog.show();
                         })
                         .setNegativeButton(R.string.donate_dialog_no, ((dialog, which) -> {
                             Intent intent = new Intent();
@@ -211,27 +250,16 @@ public class SettingsActivity extends Activity {
                 }
             });
 
-            /*
-            SwitchPreference installGms = (SwitchPreference) findPreference(INSTALL_GMS_KEY);
-            installGms.setOnPreferenceChangeListener(((preference, newValue) -> {
-                if (!(newValue instanceof Boolean)) {
-                    return false;
-                }
-                boolean install = (boolean) newValue;
-                if (install) {
-                    if (!GmsSupport.isOutsideGoogleFrameworkExist()) {
-                        Toast.makeText(getActivity(), "Sorry, your phone has no GMS supported.", Toast.LENGTH_SHORT).show();
-                        return false;
-                    }
-
-                    Toast.makeText(getActivity(), "Coming soon.", Toast.LENGTH_SHORT).show();
-                    // Installd.addGmsSupport();
-                    return false;
+            Preference installGms = findPreference(INSTALL_GMS_KEY);
+            installGms.setOnPreferenceClickListener(preference -> {
+                boolean alreadyInstalled = FakeGms.isAlreadyInstalled(getActivity());
+                if (alreadyInstalled) {
+                    FakeGms.uninstallGms(getActivity());
                 } else {
-                    // TODO, delete.
+                    FakeGms.installGms(getActivity());
                 }
-                return false;
-            }));*/
+                return true;
+            });
 
             copyFile.setOnPreferenceClickListener((preference -> {
                 Context context = getActivity();
@@ -317,6 +345,28 @@ public class SettingsActivity extends Activity {
                 }
             });
 
+            disableXposed.setOnPreferenceChangeListener((preference, newValue) -> {
+
+                if (!(newValue instanceof Boolean)) {
+                    return false;
+                }
+
+                boolean on = (boolean) newValue;
+
+                File disableXposedFile = getActivity().getFileStreamPath(".disable_xposed"); // 文件不存在代表是保守模式
+                if (on) {
+                    boolean success;
+                    try {
+                        success = disableXposedFile.createNewFile();
+                    } catch (IOException e) {
+                        success = false;
+                    }
+                    return success;
+                } else {
+                    return !disableXposedFile.exists() || disableXposedFile.delete();
+                }
+            });
+
             disableResidentNotification.setOnPreferenceChangeListener(((preference, newValue) -> {
 
                 if (!(newValue instanceof Boolean)) {
@@ -378,15 +428,15 @@ public class SettingsActivity extends Activity {
             final float scale = getResources().getDisplayMetrics().density;
             return (int) (dp * scale + 0.5f);
         }
-    }
 
-    @Override
-    public void startActivity(Intent intent) {
-        try {
-            super.startActivity(intent);
-        } catch (Throwable ignored) {
-            Toast.makeText(this, "startActivity failed.", Toast.LENGTH_SHORT).show();
-            ignored.printStackTrace();
+        @Override
+        public void startActivity(Intent intent) {
+            try {
+                super.startActivity(intent);
+            } catch (Throwable ignored) {
+                Toast.makeText(getActivity(), "startActivity failed.", Toast.LENGTH_SHORT).show();
+                ignored.printStackTrace();
+            }
         }
     }
 }
