@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.virtualapp.R;
 import io.virtualapp.abs.ui.VUiKit;
+import io.virtualapp.utils.DialogUtil;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -73,7 +74,7 @@ public class FakeGms {
                                 .setMessage(R.string.uninstall_gms_success)
                                 .setPositiveButton(android.R.string.ok, null)
                                 .create();
-                        showDialog(hits);
+                        DialogUtil.showDialog(hits);
 
                     }).fail((v) -> {
                         dialog.dismiss();
@@ -82,7 +83,7 @@ public class FakeGms {
                 }))
                 .setNegativeButton(android.R.string.cancel, null)
                 .create();
-        showDialog(failDialog);
+        DialogUtil.showDialog(failDialog);
     }
 
     public static boolean isAlreadyInstalled(Context context) {
@@ -138,7 +139,7 @@ public class FakeGms {
                                         .setMessage(R.string.install_gms_success)
                                         .setPositiveButton(android.R.string.ok, null)
                                         .create();
-                                showDialog(failDialog);
+                                DialogUtil.showDialog(failDialog);
                             });
                         } else {
                             activity.runOnUiThread(() -> {
@@ -156,7 +157,7 @@ public class FakeGms {
                                         }))
                                         .setNegativeButton(android.R.string.cancel, null)
                                         .create();
-                                showDialog(failDialog);
+                                DialogUtil.showDialog(failDialog);
                             });
 
                         }
@@ -165,20 +166,9 @@ public class FakeGms {
                 .setNegativeButton(android.R.string.cancel, null)
                 .create();
 
-        showDialog(alertDialog);
+        DialogUtil.showDialog(alertDialog);
     }
 
-
-    private static void showDialog(AlertDialog dialog) {
-        if (dialog == null) {
-            return;
-        }
-        try {
-            dialog.show();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
 
     private static String installGmsInternal(Activity activity, ProgressDialog dialog) {
         File cacheDir = activity.getCacheDir();
@@ -255,12 +245,21 @@ public class FakeGms {
             return "Download gms config failed, please check your network, error: 9";
         }
 
+        String yalpStoreUrl = null;
+        try {
+            yalpStoreUrl = jsonObject.getString("yalp");
+        } catch (JSONException e) {
+            // ignore.
+            Log.i(TAG, "Download gms config failed, please check your network");
+        }
+
         updateMessage(activity, dialog, "config parse success!");
 
         File gmsCoreFile = new File(cacheDir, "gms.apk");
         File gmsServiceFile = new File(cacheDir, "gsf.apk");
         File storeFile = new File(cacheDir, "store.apk");
         File fakeGappsFile = new File(cacheDir, "fakegapps.apk");
+        File yalpStoreFile = new File(cacheDir, "yalpStore.apk");
 
         // clear old files.
         if (gmsCoreFile.exists()) {
@@ -303,6 +302,11 @@ public class FakeGms {
             return "Download gms config failed, please check your network, error: 13";
         }
 
+        if (yalpStoreUrl != null) {
+            downloadFile(yalpStoreUrl,yalpStoreFile,
+                    (progress -> updateMessage(activity, dialog, "download yalp store.." + progress + "%")));
+        }
+
         updateMessage(activity, dialog, "installing gms core");
         InstallResult installResult = VirtualCore.get().installPackage(gmsCoreFile.getAbsolutePath(), InstallStrategy.UPDATE_IF_EXIST);
 
@@ -328,6 +332,11 @@ public class FakeGms {
             return "install gms xposed module failed: " + installResult.error;
         }
 
+        if (yalpStoreFile.exists()) {
+            updateMessage(activity, dialog, "installing yalp store...");
+            VirtualCore.get().installPackage(yalpStoreFile.getAbsolutePath(), InstallStrategy.UPDATE_IF_EXIST);
+        }
+
         // Enable the Xposed module.
         File dataDir = VEnvironment.getDataUserPackageDirectory(0, "de.robv.android.xposed.installer");
         File modulePath = VEnvironment.getPackageResourcePath(FAKE_GAPPS_PKG);
@@ -335,7 +344,6 @@ public class FakeGms {
         FileWriter writer = null;
         try {
             writer = new FileWriter(configDir, true);
-            writer.append('\n');
             writer.append(modulePath.getAbsolutePath());
             writer.flush();
 
@@ -364,11 +372,11 @@ public class FakeGms {
         });
     }
 
-    interface DownloadListener {
+    public interface DownloadListener {
         void onProgress(int progress);
     }
 
-    private static boolean downloadFile(String url, File outFile, DownloadListener listener) {
+    public static boolean downloadFile(String url, File outFile, DownloadListener listener) {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
         FileOutputStream fos = null;
@@ -411,9 +419,4 @@ public class FakeGms {
         }
 
     }
-
-    private static void showFailTips(Activity activity) {
-
-    }
-
 }

@@ -128,8 +128,6 @@
     <string name="about_feedback_tel_title">Grupo de Telegram: %1$s</string>
     <string name="advance_settings_install_gms">Instalar / Desinstalar servicios de Google</string>
     <string name="advance_settings_copy_file">Copiar archivo</string>
-    <string name="advance_settings_yield_mode_summary">Activar esta opción para un balance entre estabilidad y compatibilidad</string>
-    <string name="advance_settings_yield_mode">Modo conservativo</string>
     <string name="about_website_title">Sitio web oficial</string>
     <string name="about_feedback_title">Comentarios</string>
     <string name="about_feedback_hint">Especifique el modelo, la versión del sistema, el complemento Xposed utilizado y la versión de la aplicación correspondiente, y luego describa con el mayor detalle posible el problema que está experimentando, de lo contrario, se considera como un comentario no válido.\n</string>
@@ -144,8 +142,7 @@
     <string name="permission_tip_title">Important Tips:</string>
     <string name="permission_tips_content">%1$s no admite permisos de tiempo de ejecución, debe otorgar los permisos que necesita de antemano, permita todos los permisos que solicitará en el siguiente paso, de lo contrario, puede que no funcione correctamente.</string>
     <string name="permission_tips_confirm">Yo se</string>
-    <string name="permission_denied_tips_content">Aplicación: %1$s no concede el permiso necesario, no se puede iniciar. Dirígete a la administración de permisos de tu dispositivo y dale permisos.</string>
-    <string name="permission_denied_ok">Lanzamiento fallido</string>
+    <string name="permission_denied_tips_content">Aplicación: %1$s no otorga el permiso necesario, si no funciona correctamente, vaya a la administración de permisos de su dispositivo y otórguele permisos.</string>
     <string name="list_app_access_external_storage">Si desea instalar apk desde el almacenamiento externo, dele el permiso a VirtualXposed.</string>
     <string name="install_gms_title"></string>
     <string name="install_gms_content">El servicio de Google es compatible con microG, VirtualXposed está a punto de descargar un archivo (2M) y puede consumir más batería, ¿le gustaría instalarlo?</string>
@@ -163,4 +160,8 @@
     <string name="advance_settings_disable_xposed_summary">Cuando está deshabilitado, todo el módulo Xposed no tendrá efecto.</string>
     <string name="advance_settings_disable_xposed">Deshabilitar Xposed</string>
     <string name="prepare_xposed_installer">Preparación del entorno Xposed, espere ...</string>
+    <string name="settings_file_manage_text">File Manage</string>
+    <string name="install_file_manager_tips">File Manager es compatible con Amaze File Manager, descarga (aproximadamente 3M) e instálalo ahora.</string>
+    <string name="settings_permission_manage_text">Permiso Administrar</string>
+    <string name="install_permission_manager_tips">Permission Manage es implementado por XPrivacyLua, descarga (aproximadamente 1.7M) e instálalo ahora?</string>
 </resources>

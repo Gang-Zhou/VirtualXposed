@@ -28,9 +28,9 @@
             android:title="@string/advance_settings_install_gms"/>
 
         <Preference
-            android:key="advance_settings_copy_file"
+            android:key="settings_file_manage"
             android:persistent="false"
-            android:title="@string/advance_settings_copy_file" />
+            android:title="@string/settings_file_manage_text" />
 
         <SwitchPreference
             android:defaultValue="false"
@@ -74,18 +74,16 @@
             android:summary="@string/advance_settings_directly_back_summary"
             android:title="@string/advance_settings_directly_back" />
 
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="advance_settings_yield_mode2"
-            android:persistent="true"
-            android:summary="@string/advance_settings_yield_mode_summary"
-            android:title="@string/advance_settings_yield_mode" />
-
         <Preference
             android:key="settings_desktop"
             android:persistent="false"
             android:title="@string/settings_desktop_text" />
     </PreferenceScreen>
+
+    <Preference
+        android:key="settings_permission_manage"
+        android:persistent="false"
+        android:title="@string/settings_permission_manage_text" />
 
     <Preference
         android:key="settings_app_manage"
@@ -98,14 +96,14 @@
         android:title="@string/settings_task_manage_text" />
 
     <Preference
-        android:key="settings_faq"
-        android:persistent="false"
-        android:title="@string/about_faq_title" />
-
-    <Preference
         android:key="settings_donate"
         android:persistent="false"
         android:title="@string/about_donate_title" />
+
+    <Preference
+        android:key="settings_faq"
+        android:persistent="false"
+        android:title="@string/about_faq_title" />
 
     <Preference
         android:key="settings_about"

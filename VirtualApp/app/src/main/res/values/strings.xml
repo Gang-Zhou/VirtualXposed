@@ -129,8 +129,6 @@
     <string name="advance_settings_install_gms">Install/Uninstall Google Services</string>
     <string name="about_feedback_tel_title">Telegram Group: %1$s</string>
     <string name="advance_settings_copy_file">Copy File</string>
-    <string name="advance_settings_yield_mode_summary">Open this for a trade-off between stability and compatibility.</string>
-    <string name="advance_settings_yield_mode">Conservative Mode</string>
     <string name="about_website_title">Official website</string>
     <string name="about_feedback_title">Feedback</string>
     <string name="about_feedback_hint">Please specify your phone model, Android version, Xposed plugin, and version of the corresponding app, and then describe (in as much detail as possible) the problem you are experiencing, otherwise it is considered invalid feedback (because we can\'t effectively troubleshoot and fix said problem with only \"this app crashes\" ;) )</string>
@@ -146,8 +144,7 @@
     <string name="permission_tip_title">Important tips:</string>
     <string name="permission_tips_content">%1$s  doesn\'t support runtime permission, you must give permissions it needs in advance, please allow all the permission it will request in next step, otherwise it may not work properly.</string>
     <string name="permission_tips_confirm">OK, I know.</string>
-    <string name="permission_denied_tips_content">App: %1$s doesn\'t grant necessary permission, it cann\'t be launched. Please go to your device\'s permission management and give it permissions.</string>
-    <string name="permission_denied_ok">Launch failed.</string>
+    <string name="permission_denied_tips_content">App: %1$s doesn\'t grant necessary permission, if it doesn\'t work properly, please go to your device\'s permission management and give it permissions.</string>
     <string name="list_app_access_external_storage">If you want to install apk from external storage, please give VirtualXposed the permission.</string>
     <string name="install_gms_title" >Install Google Service</string>
     <string name="install_gms_content">The Google Service is supported by microG, VirtualXposed is about to download some file(2M), and it may consume more battery, would you like to install it?</string>
@@ -165,4 +162,8 @@
     <string name="advance_settings_disable_xposed_summary">When disabled, all Xposed module won\'t take effect.</string>
     <string name="advance_settings_disable_xposed">Disable Xposed</string>
     <string name="prepare_xposed_installer">Preparing Xposed environment, please wait…</string>
+    <string name="settings_file_manage_text">File Manage</string>
+    <string name="install_file_manager_tips">File Manager is supported by Amaze File Manager, download(about 3M) and install it now?</string>
+    <string name="settings_permission_manage_text">Permission Manage</string>
+    <string name="install_permission_manager_tips">Permission Manage is implemented by XPrivacyLua, download(about 1.7M) and install it now?</string>
 </resources>
