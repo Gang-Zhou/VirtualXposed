@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.virtualapp.R;
+import io.virtualapp.XApp;
 import io.virtualapp.abs.ui.VActivity;
 import io.virtualapp.abs.ui.VUiKit;
 
@@ -139,6 +140,10 @@ public class AppManageActivity extends VActivity {
         if (appManageInfo == null) {
             return;
         }
+        if(XApp.isChildrenMode()){
+            return;
+
+        }
         PopupMenu popupMenu = new PopupMenu(this, anchor);
         popupMenu.inflate(R.menu.app_manage_menu);
         MenuItem redirectMenu = popupMenu.getMenu().findItem(R.id.action_redirect);
@@ -148,6 +153,7 @@ public class AppManageActivity extends VActivity {
             final int userId = appManageInfo.userId;
             boolean virtualStorageEnable = VirtualStorageManager.get().isVirtualStorageEnable(packageName, userId);
             redirectMenu.setTitle(virtualStorageEnable ? R.string.app_manage_redirect_off : R.string.app_manage_redirect_on);
+
         } catch (Throwable e) {
             redirectMenu.setVisible(false);
         }

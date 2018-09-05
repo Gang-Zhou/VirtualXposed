@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
 import com.lody.virtual.client.NativeEngine;
@@ -35,7 +36,11 @@ public class XApp extends Application {
     public static XApp getApp() {
         return gApp;
     }
+    public static boolean isChildrenMode(){
+//        PreferenceManager.getDefaultSharedPreferences(getApp().getApplicationContext()).getBoolean("isChildrenMode", true);
 
+        return  getPreferences().getBoolean("isChildrenMode", true);
+    }
     @Override
     protected void attachBaseContext(Context base) {
         gApp = this;
